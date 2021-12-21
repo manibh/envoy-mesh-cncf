@@ -1,0 +1,19 @@
+apiVersion: kuma.io/v1alpha1
+kind: CircuitBreaker
+mesh: default
+metadata:
+  name: demo-circuit-breaker
+spec:
+  sources:
+  - match:
+      kuma.io/service: demo-app_kuma-demo_svc_5000
+  destinations:
+  - match:
+      kuma.io/service: redis_kuma-demo_svc_6379
+  conf:
+    interval: 5s
+    thresholds:
+      maxConnections: 80
+      maxPendingRequests: 80
+      maxRequests: 80
+      maxRetries: 5

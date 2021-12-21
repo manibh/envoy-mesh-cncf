@@ -1,0 +1,11 @@
+FROM envoyproxy/envoy-dev:latest
+
+RUN apt-get update && apt-get -q install -y \
+    curl vim net-tools
+RUN mkdir -p /opt/envoy
+
+COPY ./envoy-dyn.yaml /etc/envoy.yaml
+COPY ./config/ /opt/envoy
+
+#CMD ["/usr/local/bin/envoy", "-c /etc/envoy.yaml", "-l", "debug"]
+CMD ["/usr/local/bin/envoy", "-c /etc/envoy.yaml"]

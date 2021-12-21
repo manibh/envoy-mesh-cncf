@@ -1,0 +1,37 @@
+version_info: '0'
+resources:
+- "@type": type.googleapis.com/envoy.config.cluster.v3.Cluster
+  name: service1_cluster
+  type: STRICT_DNS
+  load_assignment:
+    cluster_name: service1_cluster
+    endpoints:
+    - lb_endpoints:
+      - endpoint:
+          address:
+            socket_address:
+              address: service1
+              port_value: 8080
+- "@type": type.googleapis.com/envoy.config.cluster.v3.Cluster
+  name: httpbin
+  connect_timeout: 0.25s
+  type: STRICT_DNS
+  lb_policy: ROUND_ROBIN
+  
+  circuit_breakers: 
+   thresholds: 
+   - priority: "DEFAULT"
+     max_connections: 1
+     max_pending_requests: 1
+     max_requests: 1
+     
+  load_assignment:
+    cluster_name: httpbin
+    endpoints:
+    - lb_endpoints:
+      - endpoint:
+          address:
+            socket_address:
+              address: httpbin1
+              port_value: 80
+     

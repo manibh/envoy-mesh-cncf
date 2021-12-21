@@ -1,0 +1,22 @@
+node: 
+  id: id_1
+  cluster: mani-test
+  locality: 
+    region: 'demo-dc'
+    zone: 'green-zone'
+    sub_zone: 'green-zone-dev'
+
+
+dynamic_resources:
+  lds_config:
+    path: /opt/envoy/lds.yaml
+  cds_config:
+    path: /opt/envoy/cds.yaml
+  
+
+admin:
+  access_log_path: /tmp/admin_access.log
+  address:
+    socket_address:
+      address: 0.0.0.0
+      port_value: 9901

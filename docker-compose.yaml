@@ -1,0 +1,49 @@
+version: "3.8"
+services:
+
+  envoy:
+    build:
+      context: .
+      dockerfile: Dockerfile-envoy
+    depends_on:
+    - httpbin1
+    - httpbin2
+    ports:
+    - 10000:10000
+    - 11000:11000
+    - 9901:9901
+    volumes:
+      - /tmp:/tmp
+    networks:
+      -  mani
+
+  httpbin1:
+    build:
+      context: .
+      dockerfile: Dockerfile-httpbin
+    hostname: httpbin1
+    ports:
+    - 9080:80    
+    networks:
+      -  mani
+
+  httpbin2:
+    build:
+      context: .
+      dockerfile: Dockerfile-httpbin
+    hostname: httpbin2
+    ports:
+    - 9090:80    
+    networks:
+      -  mani
+
+  service1:
+    image: jmalloc/echo-server
+    hostname: service1
+    ports:
+    - 8080:8080    
+    networks:
+      -  mani
+
+networks:
+  mani:

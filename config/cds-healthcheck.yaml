@@ -1,0 +1,53 @@
+version_info: '0'
+resources:
+- "@type": type.googleapis.com/envoy.config.cluster.v3.Cluster
+  name: service1_cluster
+  type: STRICT_DNS
+  load_assignment:
+    cluster_name: service1_cluster
+    endpoints:
+    - lb_endpoints:
+      - endpoint:
+          address:
+            socket_address:
+              address: service1
+              port_value: 8080
+- "@type": type.googleapis.com/envoy.config.cluster.v3.Cluster
+  name: httpbin
+  connect_timeout: 0.25s
+  type: STRICT_DNS
+  lb_policy: ROUND_ROBIN
+  
+  #eject the host for 60s after 2 consecutive 5xx errors
+  # outlier_detection: 
+  #  consecutive_5xx: "2"
+  #  base_ejection_time: "60s"
+  
+
+  #Refer to https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/core/v3/health_check.proto#envoy-v3-api-msg-config-core-v3-healthcheck-httphealthcheck
+  health_checks:
+  - timeout: 1s
+    interval: 10s
+    unhealthy_interval: 5s
+    unhealthy_threshold: 1
+    healthy_threshold: 2
+    http_health_check:
+      path: "/get"
+      expected_statuses:
+      - "start" : 200
+        "end" :   299
+
+  load_assignment:
+    cluster_name: httpbin
+    endpoints:
+    - lb_endpoints:
+      - endpoint:
+          address:
+            socket_address:
+              address: httpbin1
+              port_value: 80
+      - endpoint:        
+          address:
+            socket_address:
+              address: httpbin2
+              port_value: 80
